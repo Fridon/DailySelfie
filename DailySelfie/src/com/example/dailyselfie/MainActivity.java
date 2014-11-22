@@ -1,34 +1,34 @@
 package com.example.dailyselfie;
 
-import android.app.Activity;
+import java.io.File;
+import java.io.IOException;
+
+import android.app.ListActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.os.Environment;
 
-public class MainActivity extends Activity {
-
+public class MainActivity extends ListActivity {
+	 
+	private static final String PHOTO_FOLDER = "/daily_selfie/";
+	String cameraPath;
+	ImageAdapter mAdapter;
+	 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+		//setContentView(R.layout.main);
+		
+		File dcim = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+		cameraPath = dcim.getAbsolutePath();
+		
+		try {
+			mAdapter = new ImageAdapter(this, cameraPath + PHOTO_FOLDER);
+		} catch (IOException e) {
+			e.printStackTrace();
+			finish();
 		}
-		return super.onOptionsItemSelected(item);
+		
+		setListAdapter(mAdapter);
+	 
 	}
 }

@@ -23,11 +23,12 @@ public class ImageAdapter extends BaseAdapter {
 		files = new ArrayList<File>();
 		this.activity = activity;
 		File targetDirector = new File(fileDir);       	        
-        if(!targetDirector.exists())
+        if(!targetDirector.exists()){
         	if(!targetDirector.mkdirs()){ 
         		Toast.makeText(activity, "Dirrectory not created", Toast.LENGTH_LONG).show();
         		throw new IOException();
         	}
+        }
         File[] temp = targetDirector.listFiles();
         if(temp != null){
         	for(File file : temp)
@@ -35,9 +36,8 @@ public class ImageAdapter extends BaseAdapter {
         }
 	}
 	
-	public void add(String fileAdr){
-		File newPhoto = new File(fileAdr);
-		files.add(newPhoto);
+	public void add(File newFile){
+		files.add(newFile);
 	}
 	
 	public void remove(int index){

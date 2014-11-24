@@ -19,11 +19,16 @@ public class PictureActivity extends Activity implements OnSystemUiVisibilityCha
 	ImageView pictureView;
 	LinearLayout pictureLayout;
 	View decorView;
+	
 	Runnable mNavHider = new Runnable() {
         @Override public void run() {
             hideUI();
         }
     };
+    
+    public final int INVISIBLE = View.SYSTEM_UI_FLAG_FULLSCREEN 
+    							| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION 
+    							| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +41,8 @@ public class PictureActivity extends Activity implements OnSystemUiVisibilityCha
 		
 		pictureLayout.setOnClickListener(this);
 		decorView.setOnSystemUiVisibilityChangeListener(this);	
-		
-		Bitmap bm = decodeSampledBitmapFromUri(getIntent().getStringExtra("FileDir"));
+		decorView.setOnClickListener(this);
+		Bitmap bm = decodeFullBitmapFromUri(getIntent().getStringExtra("FileDir"));
 		pictureView.setImageBitmap(bm);
 	}
 	
@@ -68,17 +73,22 @@ public class PictureActivity extends Activity implements OnSystemUiVisibilityCha
 	}
 
 	@Override
-	public void onClick(View arg0) {
-		//unHideUI();
+	public void onClick(View v) {
+		switch(v.getId()){
+		case R.id.pictureLayout:
+			if(decorView.getSystemUiVisibility() == View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION){
+				decorView.getHandler().removeCallbacks(mNavHider);
+			}
+			decorView.getHandler().postDelayed(mNavHider, 3000);				
+			break;
+		}
 		
 	}
 
 	
 	void hideUI() {
 		getActionBar().hide();
-		decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN 
-				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION 
-				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);		
+		decorView.setSystemUiVisibility(INVISIBLE);		
 	}
 
 	@Override
@@ -91,7 +101,7 @@ public class PictureActivity extends Activity implements OnSystemUiVisibilityCha
 		}	
 	}
 	
-	private Bitmap decodeSampledBitmapFromUri(String path) {
+	private Bitmap decodeFullBitmapFromUri(String path) {
     	Bitmap bm = null; 	
     	// First decode with inJustDecodeBounds=true to check dimensions
     	final BitmapFactory.Options options = new BitmapFactory.Options();

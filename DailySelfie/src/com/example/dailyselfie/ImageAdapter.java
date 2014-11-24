@@ -15,8 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ImageAdapter extends BaseAdapter {
-	Activity activity;
-	ArrayList<File> files;
+	private Activity activity;
+	private ArrayList<File> files;
 	
 	public ImageAdapter(Activity activity, String fileDir) throws IOException{
 		super();
@@ -44,6 +44,12 @@ public class ImageAdapter extends BaseAdapter {
 		files.remove(index);
 	}
 	
+	public ArrayList<File> removeAll(){
+		ArrayList<File> temp = files;
+		files = new ArrayList<File>();
+		return temp;
+	}
+	
 	@Override
 	public int getCount() {
 		return files.size();
@@ -69,7 +75,7 @@ public class ImageAdapter extends BaseAdapter {
 		TextView Date = (TextView)convertView.findViewById(R.id.dateText);
 		Date.setText(current.getName());
 		ImageView photoPreview  = (ImageView)convertView.findViewById(R.id.photoPreview);
-		Bitmap image = decodeSampledBitmapFromUri(current.getAbsolutePath(), 100, 100);
+		Bitmap image = decodeSampledBitmapFromUri(current.getAbsolutePath(), 200, 200);
 		photoPreview.setImageBitmap(image);	
 		return convertView;
 	}

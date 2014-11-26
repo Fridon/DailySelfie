@@ -16,7 +16,6 @@ public class DailySelfieAlarmManager {
 	public static final long SECOND = 1000;
 	public static final long MINUTE = 60 * SECOND;
 	public static final long HOUR = 60 * MINUTE;
-	public static final long DAY = 24 * HOUR;
 	
 	public DailySelfieAlarmManager(Activity activity){
 		this.mActivity = activity;
@@ -25,12 +24,12 @@ public class DailySelfieAlarmManager {
 		mPendingIntent = PendingIntent.getBroadcast(mActivity, 0, mIntent, 0);
 	}
 	
-	public void setUpAlarm(long days, long hours, long minutes, long seconds){
-		setUpAlarm(days * DAY + hours * HOUR + minutes * MINUTE + seconds * SECOND);
+	public void setUpAlarm(long hours, long minutes, long seconds){
+		setUpAlarm(hours * HOUR + minutes * MINUTE + seconds * SECOND);
 	}
 	
 	public void setUpAlarm(long delayInMillis){
-		mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+		mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
 				SystemClock.elapsedRealtime() + delayInMillis,
 				delayInMillis, mPendingIntent);
 	}

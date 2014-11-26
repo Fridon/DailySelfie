@@ -21,6 +21,7 @@ import android.widget.ListView;
 import com.example.dailyselfie.R;
 import com.example.dailyselfie.adapters.ImageAdapter;
 import com.example.dailyselfie.alarms.DailySelfieAlarmManager;
+import com.example.dailyselfie.dialogs.AlarmDialog;
 
 public class MainActivity extends ListActivity {
 	 
@@ -28,6 +29,7 @@ public class MainActivity extends ListActivity {
 	public static final int REQUEST_CODE_PHOTO = 1;
 	
 	static ImageAdapter mAdapter;
+	AlarmDialog dialog;
 	DailySelfieAlarmManager mManager;
 	String cameraPath;
 	File currentPhoto;
@@ -42,7 +44,6 @@ public class MainActivity extends ListActivity {
 		File dcim = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
 		cameraPath = dcim.getAbsolutePath();
 		
-		mManager = new DailySelfieAlarmManager(this);
 		try {
 			if(mAdapter == null)
 				mAdapter = new ImageAdapter(this, cameraPath + PHOTO_FOLDER);
@@ -54,14 +55,14 @@ public class MainActivity extends ListActivity {
 		registerForContextMenu(getListView());
 		setListAdapter(mAdapter);		
 	}
-	
+		
 	@Override
 	public void onResume(){
 		super.onResume();
-		mManager.setUpAlarm(10000);
-		mManager.removeAlarm();
+		mManager = new DailySelfieAlarmManager(this);
+		dialog = new AlarmDialog(mManager);
 	}
-		
+	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 	    super.onSaveInstanceState(outState);
@@ -99,6 +100,9 @@ public class MainActivity extends ListActivity {
 	            intent.putExtra(MediaStore.EXTRA_OUTPUT, generatePhotoURI());
 	            startActivityForResult(intent, REQUEST_CODE_PHOTO);
 	            return true;
+	        case R.id.actionBarAlarm:
+	        	dialog.show(getFragmentManager(), "Alarm dialog");
+	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }

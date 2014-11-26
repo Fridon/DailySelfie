@@ -1,4 +1,4 @@
-package com.example.dailyselfie;
+package com.example.dailyselfie.activities;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,12 +18,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.dailyselfie.R;
+import com.example.dailyselfie.adapters.ImageAdapter;
+import com.example.dailyselfie.alarms.DailySelfieAlarmManager;
+
 public class MainActivity extends ListActivity {
 	 
 	public static final String PHOTO_FOLDER = "/daily_selfie/";
 	public static final int REQUEST_CODE_PHOTO = 1;
 	
 	static ImageAdapter mAdapter;
+	DailySelfieAlarmManager mManager;
 	String cameraPath;
 	File currentPhoto;
 	
@@ -37,6 +42,7 @@ public class MainActivity extends ListActivity {
 		File dcim = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
 		cameraPath = dcim.getAbsolutePath();
 		
+		mManager = new DailySelfieAlarmManager(this);
 		try {
 			if(mAdapter == null)
 				mAdapter = new ImageAdapter(this, cameraPath + PHOTO_FOLDER);
@@ -50,18 +56,10 @@ public class MainActivity extends ListActivity {
 	}
 	
 	@Override
-	public void onStop(){
-		super.onStop();
-	}
-
-	@Override
-	public void onRestart(){
-		super.onRestart();
-	}
-		
-	@Override
-	public void onStart(){
-		super.onStart();
+	public void onResume(){
+		super.onResume();
+		mManager.setUpAlarm(10000);
+		mManager.removeAlarm();
 	}
 		
 	@Override
@@ -141,7 +139,7 @@ public class MainActivity extends ListActivity {
 	
 	//***********************************************
 	//Begin of implementation methods
-	protected void onActivityResult(int requestCode, int resultCode,Intent intent) {
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == REQUEST_CODE_PHOTO && resultCode == RESULT_OK){
 			
         	//Preventing bug "https://code.google.com/p/android/issues/detail?id=38282"
@@ -158,17 +156,11 @@ public class MainActivity extends ListActivity {
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id){
-		try {
-			Class clazz = Class.forName("com.example.dailyselfie.PictureActivity");
-			Intent intent = new Intent(this, clazz);
+			Intent intent = new Intent(this, PictureActivity.class);
 			File photo = (File)mAdapter.getItem(position);
 			Uri fileUri = Uri.fromFile(photo);
 			intent.putExtra("FileDir", fileUri.getEncodedPath());
 			startActivity(intent);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	//End of implementation methods
@@ -190,4 +182,5 @@ public class MainActivity extends ListActivity {
 	}
 	//End of helping methods
 	//***********************************************
+	
 }

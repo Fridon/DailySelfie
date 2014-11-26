@@ -1,4 +1,9 @@
-package com.example.dailyselfie;
+package com.example.dailyselfie.activities;
+
+import com.example.dailyselfie.R;
+import com.example.dailyselfie.R.id;
+import com.example.dailyselfie.R.layout;
+import com.example.dailyselfie.R.menu;
 
 import android.app.Activity;
 import android.graphics.Bitmap;

@@ -1,8 +1,12 @@
-package com.example.dailyselfie;
+package com.example.dailyselfie.adapters;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import com.example.dailyselfie.R;
+import com.example.dailyselfie.R.id;
+import com.example.dailyselfie.R.layout;
 
 import android.app.Activity;
 import android.graphics.Bitmap;

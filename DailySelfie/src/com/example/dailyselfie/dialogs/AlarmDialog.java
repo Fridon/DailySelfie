@@ -27,7 +27,7 @@ public class AlarmDialog extends DialogFragment implements OnClickListener{
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		      Bundle savedInstanceState) {
-		    getDialog().setTitle("Title!");
+		    getDialog().setTitle("Set up alarm");
 		    View v = inflater.inflate(R.layout.alarm_dialog, null);
 		    v.findViewById(R.id.alarmSetUp).setOnClickListener(this);
 		    v.findViewById(R.id.alarmRemove).setOnClickListener(this);
@@ -59,7 +59,7 @@ public class AlarmDialog extends DialogFragment implements OnClickListener{
 			break;
 		case R.id.alarmRemove:
 			mAlarmManager.removeAlarm();
-			Toast.makeText(getActivity(), "Alarm removed  ", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), "Alarm removed", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.alarmCancel:
 			break;			

@@ -12,6 +12,7 @@ public final class R {
     }
     public static final class color {
         public static final int Black=0x7f040000;
+        public static final int Grey=0x7f040001;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -28,24 +29,21 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int actionBarAlarm=0x7f09000e;
-        public static final int actionBarCamera=0x7f09000d;
-        public static final int action_settings=0x7f090011;
+        public static final int actionBarAlarm=0x7f09000b;
+        public static final int actionBarCamera=0x7f09000a;
+        public static final int action_settings=0x7f09000e;
         public static final int alarmCancel=0x7f090006;
         public static final int alarmNumberPickerHour=0x7f090002;
         public static final int alarmNumberPickerMin=0x7f090003;
         public static final int alarmNumberPickerSec=0x7f090004;
         public static final int alarmRemove=0x7f090005;
         public static final int alarmSetUp=0x7f090007;
-        public static final int dailyGallery=0x7f09000b;
-        public static final int dateText=0x7f090009;
-        public static final int deleteAll=0x7f090010;
-        public static final int deleteItem=0x7f09000f;
+        public static final int deleteAll=0x7f09000d;
+        public static final int deleteItem=0x7f09000c;
+        public static final int mainGridView=0x7f090009;
         public static final int photoPreview=0x7f090008;
         public static final int pictureLayout=0x7f090000;
         public static final int pictureView=0x7f090001;
-        public static final int selfieView=0x7f09000c;
-        public static final int timeText=0x7f09000a;
     }
     public static final class layout {
         public static final int activity_picture=0x7f030000;

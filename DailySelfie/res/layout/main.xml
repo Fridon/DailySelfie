@@ -3,21 +3,16 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/Black"
     tools:context="com.example.dailyselfie.activities.MainActivity" >
 
-
-    <Gallery
-        android:id="@+id/dailyGallery"
-        android:layout_weight="1"
+    <GridView
+        android:id="@+id/mainGridView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <ImageView
-        android:id="@+id/selfieView"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_launcher" />
+        android:numColumns="auto_fit"
+        android:padding="5dp"
+        android:columnWidth="150dp" >
+    </GridView>
 
 </LinearLayout>

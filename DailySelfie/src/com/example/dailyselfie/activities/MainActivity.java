@@ -2,8 +2,10 @@ package com.example.dailyselfie.activities;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,23 +18,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 
 import com.example.dailyselfie.R;
 import com.example.dailyselfie.adapters.ImageAdapter;
 import com.example.dailyselfie.alarms.DailySelfieAlarmManager;
 import com.example.dailyselfie.dialogs.AlarmDialog;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends Activity implements OnItemClickListener{
 	 
 	public static final String PHOTO_FOLDER = "/daily_selfie/";
 	public static final int REQUEST_CODE_PHOTO = 1;
 	
-	static ImageAdapter mAdapter;
+	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss"); 
+	
+	static ImageAdapter mImageAdapter;
 	AlarmDialog dialog;
 	DailySelfieAlarmManager mManager;
 	String cameraPath;
 	File currentPhoto;
+	GridView gridView;
 	
 	
 	//***********************************************
@@ -40,20 +46,22 @@ public class MainActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
 		
 		File dcim = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
 		cameraPath = dcim.getAbsolutePath();
-		
+		gridView = (GridView)findViewById(R.id.mainGridView);
 		try {
-			if(mAdapter == null)
-				mAdapter = new ImageAdapter(this, cameraPath + PHOTO_FOLDER);
+			if(mImageAdapter == null)
+				mImageAdapter = new ImageAdapter(this, cameraPath + PHOTO_FOLDER);
 		} catch (IOException e) {
 			e.printStackTrace();
 			finish();
 		}
 		
-		registerForContextMenu(getListView());
-		setListAdapter(mAdapter);		
+		gridView.setAdapter(mImageAdapter);
+		gridView.setOnItemClickListener(this);
+		registerForContextMenu(gridView);
 	}
 		
 	@Override
@@ -120,18 +128,18 @@ public class MainActivity extends ListActivity {
 		case R.id.deleteItem:
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 			int position = info.position;
-			File file = (File)mAdapter.getItem(position);
+			File file = (File)mImageAdapter.getItem(position);
 			if(deleteFile(file)){
-				mAdapter.remove(position);
-				mAdapter.notifyDataSetChanged();
+				mImageAdapter.remove(position);
+				mImageAdapter.notifyDataSetChanged();
 				return true;	
 			}
 			return false;
 		case R.id.deleteAll:
-			for(File temp:mAdapter.removeAll()){
+			for(File temp:mImageAdapter.removeAll()){
 				deleteFile(temp);
 			}
-			mAdapter.notifyDataSetChanged();
+			mImageAdapter.notifyDataSetChanged();
 			return true;
 		default:
 			return super.onContextItemSelected(item);	
@@ -151,29 +159,32 @@ public class MainActivity extends ListActivity {
 			sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(currentPhoto)));
 			
 			//Adding new photo to list
-			mAdapter.add(currentPhoto);
-			mAdapter.notifyDataSetChanged();	    
+			mImageAdapter.add(currentPhoto);
+			mImageAdapter.notifyDataSetChanged();	    
 		}
 		super.onActivityResult(requestCode, resultCode, intent);
 
 	}
 	
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id){
-			Intent intent = new Intent(this, PictureActivity.class);
-			File photo = (File)mAdapter.getItem(position);
-			Uri fileUri = Uri.fromFile(photo);
-			intent.putExtra("FileDir", fileUri.getEncodedPath());
-			startActivity(intent);
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		Intent intent = new Intent(this, PictureActivity.class);
+		File photo = (File)mImageAdapter.getItem(position);
+		intent.putExtra("FileDir", photo.getAbsolutePath());
+		intent.putExtra("FileName", photo.getName());
+		startActivity(intent);	
 	}
-
+	
+	
 	//End of implementation methods
 	//***********************************************
 	
 	//***********************************************
 	//Begin of helping methods
 	private Uri generatePhotoURI(){
-		currentPhoto = new File(cameraPath +"/"+ PHOTO_FOLDER + System.currentTimeMillis() + ".jpg");		
+		Date date = new Date(System.currentTimeMillis());
+		currentPhoto = new File(cameraPath + PHOTO_FOLDER + DATE_FORMAT.format(date) + ".jpg");		
 		return Uri.fromFile(currentPhoto);
 	}
 	
@@ -185,6 +196,5 @@ public class MainActivity extends ListActivity {
 		return result;
 	}
 	//End of helping methods
-	//***********************************************
-	
+	//***********************************************	
 }

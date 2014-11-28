@@ -4,19 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.example.dailyselfie.R;
-import com.example.dailyselfie.R.id;
-import com.example.dailyselfie.R.layout;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
+import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.dailyselfie.R;
 
 public class ImageAdapter extends BaseAdapter {
 	private Activity activity;
@@ -76,15 +75,18 @@ public class ImageAdapter extends BaseAdapter {
 			convertView = activity.getLayoutInflater().inflate(R.layout.list_item, null, false);
 		}
 		File current = files.get(position);
-		TextView Date = (TextView)convertView.findViewById(R.id.dateText);
-		Date.setText(current.getName());
 		ImageView photoPreview  = (ImageView)convertView.findViewById(R.id.photoPreview);
-		Bitmap image = decodeSampledBitmapFromUri(current.getAbsolutePath(), 200, 200);
-		photoPreview.setImageBitmap(image);	
+		try {
+			Bitmap	image = decodeSampledBitmapFromUri(current.getAbsolutePath(), 150, 150);
+			photoPreview.setImageBitmap(image);	
+		} catch (IOException e) {
+			files.remove(position);
+			notifyDataSetChanged();
+		}
 		return convertView;
 	}
 	
-	private Bitmap decodeSampledBitmapFromUri(String path, int reqWidth, int reqHeight) {
+	private Bitmap decodeSampledBitmapFromUri(String path, int reqWidth, int reqHeight) throws IOException {
     	Bitmap bm = null;
     	
     	// First decode with inJustDecodeBounds=true to check dimensions
@@ -95,9 +97,11 @@ public class ImageAdapter extends BaseAdapter {
     	// Calculate inSampleSize
     	options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
     	
-    	// Decode bitmap with inSampleSize set
+    	// Decode square bitmap with inSampleSize set
     	options.inJustDecodeBounds = false;
-    	bm = BitmapFactory.decodeFile(path, options); 
+    	BitmapRegionDecoder BRD = BitmapRegionDecoder.newInstance(path, true);
+    	Rect rect = decodeBounds(options);
+    	bm = BRD.decodeRegion(rect, options);
     	
     	return bm; 	
     }
@@ -117,6 +121,23 @@ public class ImageAdapter extends BaseAdapter {
     	}
     	
     	return inSampleSize;  	
+    }
+    
+    private Rect decodeBounds(BitmapFactory.Options options){
+    	Rect rect = new Rect();
+    	if (options.outWidth < options.outHeight) {
+    		rect.left = 0;
+    		rect.right = options.outWidth;
+    		rect.top = (options.outHeight - options.outWidth)/2;
+    		rect.bottom = options.outHeight - rect.top;
+		} else {
+			rect.top = 0;
+			rect.bottom = options.outHeight;
+			rect.left = (options.outWidth - options.outHeight)/2;
+			rect.right = options.outWidth - rect.left;
+		} 
+    	
+    	return rect;
     }
 
 }

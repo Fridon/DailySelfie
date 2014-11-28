@@ -73,6 +73,8 @@ public class AlarmDialog extends DialogFragment implements OnClickListener{
 		this.dismiss();
 	}
 	
+	
+	//Method forms message 
 	private String formMessage(int hours, int minutes, int seconds){
 		StringBuilder sb = new StringBuilder();
 		sb.append("The alarm will occur every ");
@@ -81,7 +83,7 @@ public class AlarmDialog extends DialogFragment implements OnClickListener{
 			sb.append(" hours,");
 		}if(minutes != 0){
 			sb.append(minutes);
-			sb.append(" minutes and");
+			sb.append(" minutes and ");
 		}
 		sb.append(seconds);
 		sb.append(" seconds.");

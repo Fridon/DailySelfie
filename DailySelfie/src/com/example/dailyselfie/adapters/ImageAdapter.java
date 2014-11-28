@@ -11,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Rect;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -23,7 +22,7 @@ import com.example.dailyselfie.R;
 public class ImageAdapter extends BaseAdapter {
 	private Activity activity;
 	private ArrayList<File> files;
-	private static Handler handler;
+
 	
 	public ImageAdapter(Activity activity, String fileDir) throws IOException{
 		super();

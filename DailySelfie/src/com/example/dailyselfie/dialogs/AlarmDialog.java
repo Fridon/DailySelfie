@@ -59,7 +59,7 @@ public class AlarmDialog extends DialogFragment implements OnClickListener{
 			break;
 		case R.id.alarmRemove:
 			mAlarmManager.removeAlarm();
-			Toast.makeText(getActivity(), "Alarm removed", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), "Alarm removed  ", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.alarmCancel:
 			break;			

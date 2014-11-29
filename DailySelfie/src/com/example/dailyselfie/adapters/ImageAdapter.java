@@ -21,12 +21,12 @@ import com.example.dailyselfie.R;
 
 public class ImageAdapter extends BaseAdapter {
 	private Activity activity;
-	private ArrayList<File> files;
+	private ArrayList<ViewBitmapHandler> files;
 
 	
 	public ImageAdapter(Activity activity, String fileDir) throws IOException{
 		super();
-		files = new ArrayList<File>();
+		files = new ArrayList<ViewBitmapHandler>();
 		this.activity = activity;
 		File targetDirector = new File(fileDir);       	        
         if(!targetDirector.exists()){
@@ -38,23 +38,23 @@ public class ImageAdapter extends BaseAdapter {
         File[] temp = targetDirector.listFiles();
         if(temp != null){
         	for(File file : temp)
-        		files.add(file);
+        		files.add(new ViewBitmapHandler(file));
         }
         
         
 	}
 	
 	public void add(File newFile){
-		files.add(newFile);
+		files.add(new ViewBitmapHandler(newFile));
 	}
 	
 	public void remove(int index){
 		files.remove(index);
 	}
 	
-	public ArrayList<File> removeAll(){
-		ArrayList<File> temp = files;
-		files = new ArrayList<File>();
+	public ArrayList<ViewBitmapHandler> removeAll(){
+		ArrayList<ViewBitmapHandler> temp = files;
+		files = new ArrayList<ViewBitmapHandler>();
 		return temp;
 	}
 	
@@ -79,21 +79,31 @@ public class ImageAdapter extends BaseAdapter {
 		if(convertView == null){
 			convertView = activity.getLayoutInflater().inflate(R.layout.list_item, null, false);
 		}
-		File current = files.get(position);
+		ViewBitmapHandler current = files.get(position);
 		ImageView photoPreview  = (ImageView)convertView.findViewById(R.id.photoPreview);
 		photoPreview.setImageResource(R.drawable.loading);
-		ImageLoader loader = new ImageLoader(photoPreview);
-		loader.execute(current.getAbsolutePath());
+		//if preview not loaded - loading bitmap
+		if(current.getBitmap() == null){
+			ImageLoader loader = new ImageLoader(photoPreview, current);
+			loader.execute(current.getFile().getAbsolutePath());
+		}else{
+			photoPreview.setImageBitmap(current.getBitmap());
+		}
 	
 		return convertView;
 	}
     
+	
+	//class for loading image previews in background thread
     public class ImageLoader extends AsyncTask<String, Void, Bitmap>{
     	private final WeakReference<ImageView> imageViewReference;
-    	String filePath = "";
+    	private final WeakReference<ViewBitmapHandler> handlerReference;
+    	String filePath = ""; 
     	
-    	public ImageLoader(ImageView imageView){
+    	
+    	public ImageLoader(ImageView imageView, ViewBitmapHandler handler){
     		imageViewReference = new WeakReference<ImageView>(imageView);
+    		handlerReference = new WeakReference<ViewBitmapHandler>(handler);
     	}
     	
 		@Override
@@ -104,10 +114,12 @@ public class ImageAdapter extends BaseAdapter {
     	
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
-			if (imageViewReference != null && bitmap != null) {
+			if (imageViewReference != null && bitmap != null && handlerReference != null) {
 				final ImageView imageView = imageViewReference.get();
+				final ViewBitmapHandler handler = handlerReference.get();
 		        if (imageView != null) {
 		        	imageView.setImageBitmap(bitmap);
+		        	handler.setBitmap(bitmap);
 		        }
 			}
 		}
@@ -171,6 +183,43 @@ public class ImageAdapter extends BaseAdapter {
 	    	return rect;
 	    }
     	
+    }
+    
+    
+    //class for handling loaded bitmap
+    public class ViewBitmapHandler {
+    	private File file;
+    	private Bitmap bitmap;
+    	
+    	public ViewBitmapHandler(File file, Bitmap bitmap){
+    		this.file = file;
+    		this.bitmap = bitmap;
+    	}
+    	
+    	public ViewBitmapHandler(File file){
+    		this(file, null);
+    	}
+    	
+    	public ViewBitmapHandler(){
+    		this(null, null);
+    	}
+
+		public File getFile() {
+			return file;
+		}
+
+		public void setFile(File file) {
+			this.file = file;
+		}
+
+		public Bitmap getBitmap() {
+			return bitmap;
+		}
+
+		public void setBitmap(Bitmap bitmap) {
+			this.bitmap = bitmap;
+		}
+    
     }
 	
 }

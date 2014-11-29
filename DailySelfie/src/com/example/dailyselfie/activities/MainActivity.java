@@ -23,6 +23,7 @@ import android.widget.GridView;
 
 import com.example.dailyselfie.R;
 import com.example.dailyselfie.adapters.ImageAdapter;
+import com.example.dailyselfie.adapters.ImageAdapter.ViewBitmapHandler;
 import com.example.dailyselfie.alarms.DailySelfieAlarmManager;
 import com.example.dailyselfie.dialogs.AlarmDialog;
 
@@ -136,8 +137,8 @@ public class MainActivity extends Activity implements OnItemClickListener{
 			}
 			return false;
 		case R.id.deleteAll:
-			for(File temp:mImageAdapter.removeAll()){
-				deleteFile(temp);
+			for(ViewBitmapHandler temp:mImageAdapter.removeAll()){
+				deleteFile(temp.getFile());
 			}
 			mImageAdapter.notifyDataSetChanged();
 			return true;
@@ -170,12 +171,12 @@ public class MainActivity extends Activity implements OnItemClickListener{
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		Intent intent = new Intent(this, PictureActivity.class);
-		File photo = (File)mImageAdapter.getItem(position);
+		ViewBitmapHandler current = (ViewBitmapHandler)mImageAdapter.getItem(position);
+		File photo = current.getFile();
 		intent.putExtra("FileDir", photo.getAbsolutePath());
 		intent.putExtra("FileName", photo.getName());
 		startActivity(intent);	
 	}
-	
 	
 	//End of implementation methods
 	//***********************************************

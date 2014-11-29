@@ -130,7 +130,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		case R.id.deleteItem:
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 			int position = info.position;
-			File file = (File) mImageAdapter.getItem(position);
+			ViewBitmapHandler handler = (ViewBitmapHandler) mImageAdapter.getItem(position);
+			File file = handler.getFile();
 			if (deleteFile(file)) {
 				mImageAdapter.remove(position);
 				mImageAdapter.notifyDataSetChanged();

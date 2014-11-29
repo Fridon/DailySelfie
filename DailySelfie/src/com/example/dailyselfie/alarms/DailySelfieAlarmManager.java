@@ -12,30 +12,30 @@ public class DailySelfieAlarmManager {
 	private AlarmManager mAlarmManager;
 	private Intent mIntent;
 	private PendingIntent mPendingIntent;
-	
+
 	public static final long SECOND = 1000;
 	public static final long MINUTE = 60 * SECOND;
 	public static final long HOUR = 60 * MINUTE;
-	
-	public DailySelfieAlarmManager(Activity activity){
+
+	public DailySelfieAlarmManager(Activity activity) {
 		this.mActivity = activity;
 		mAlarmManager = (AlarmManager) mActivity.getSystemService(Activity.ALARM_SERVICE);
 		mIntent = new Intent(mActivity, DailySelfieAlarmReceiver.class);
 		mPendingIntent = PendingIntent.getBroadcast(mActivity, 0, mIntent, 0);
 	}
-	
-	public void setUpAlarm(long hours, long minutes, long seconds){
+
+	public void setUpAlarm(long hours, long minutes, long seconds) {
 		setUpAlarm(hours * HOUR + minutes * MINUTE + seconds * SECOND);
 	}
-	
-	public void setUpAlarm(long delayInMillis){
+
+	public void setUpAlarm(long delayInMillis) {
 		mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
-				SystemClock.elapsedRealtime() + delayInMillis,
-				delayInMillis, mPendingIntent);
+				SystemClock.elapsedRealtime() + delayInMillis, delayInMillis,
+				mPendingIntent);
 	}
-	
-	public void removeAlarm(){
+
+	public void removeAlarm() {
 		mAlarmManager.cancel(mPendingIntent);
 	}
-	
+
 }
